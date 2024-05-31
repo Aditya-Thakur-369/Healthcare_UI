@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:healthcare/features/detail/detail.dart';
+import 'package:healthcare/features/home/data/dummy_data.dart';
+import 'package:healthcare/features/home/model/organModel.dart';
+import 'package:healthcare/features/home/widget/custom_painter.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'package:healthcare/common/color/app_color.dart';
@@ -99,9 +103,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(30),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               IconlyBroken.heart,
-                              color: Colors.black,
+                              color: Colors.grey.shade600,
                             ),
                             SizedBox(
                               width: 20.w,
@@ -111,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.urbanist(
                                   textStyle: TextStyle(
                                       fontSize: 18.sp,
-                                      color: Colors.black,
+                                      color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w300)),
                             )
                           ],
@@ -124,9 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(30),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Iconsax.messages_14,
-                              color: Colors.black,
+                              color: Colors.grey.shade600,
                             ),
                             SizedBox(
                               width: 20.w,
@@ -136,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.urbanist(
                                   textStyle: TextStyle(
                                       fontSize: 18.sp,
-                                      color: Colors.black,
+                                      color: Colors.grey.shade600,
                                       fontWeight: FontWeight.w300)),
                             )
                           ],
@@ -185,9 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     "Your Condition",
                     style: GoogleFonts.urbanist(
                         textStyle: TextStyle(
-                            fontSize: 20.sp,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600)),
+                            fontSize: 20.sp, fontWeight: FontWeight.w600)),
                   ),
                   SizedBox(
                     height: 35.h,
@@ -228,29 +230,25 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 20.h,
               ),
+              GridView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: DummyData.orgnaList.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (context, index) {
+                  var data = DummyData.orgnaList[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: CustomCard(
+                      model: data,
+                    ),
+                  );
+                },
+              ),
               SizedBox(
-                height: 420,
-                width: 420,
-                child: GridView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: img.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemBuilder: (context, index) {
-                    var data = img[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: GestureDetector(
-                          onTap: () {
-                            // context.go(Routes.detailsscreen.path);
-                          },
-                          child: CustomCard(
-                            img: data,
-                          )),
-                    );
-                  },
-                ),
+                height: 30.h,
               ),
             ],
           ),
@@ -258,20 +256,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  List<String> img = [
-    'assets/images/brain.png',
-    'assets/images/heart.png',
-    'assets/images/kidney.png',
-    'assets/images/liver.png',
-  ];
 }
 
 class CustomCard extends StatefulWidget {
-  String img;
+  OrganModel model;
   CustomCard({
     super.key,
-    required this.img,
+    required this.model,
   });
 
   @override
@@ -287,11 +278,6 @@ class _CustomCardState extends State<CustomCard> {
       onTap: () {
         setState(() {
           flag = !flag;
-          // Timer.periodic(const Duration(seconds: 3), (timer) {
-          //   setState(() {
-          //     flag = false;
-          //   });
-          // });
         });
       },
       child: Container(
@@ -305,7 +291,7 @@ class _CustomCardState extends State<CustomCard> {
             children: [
               Positioned.fill(
                 child: Image.asset(
-                  widget.img,
+                  widget.model.imageUrl,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -336,15 +322,23 @@ class _CustomCardState extends State<CustomCard> {
                                 children: [
                                   const Spacer(),
                                   Text(
-                                    "My Heart",
+                                    widget.model.name,
                                     style: GoogleFonts.urbanist(
                                         textStyle: TextStyle(
                                             fontSize: 18.sp,
-                                            color: Colors.black,
+                                            // color: Colors.black,
                                             fontWeight: FontWeight.w400)),
                                   ),
                                   const Spacer(),
                                   GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) => DetailsScreen(
+                                                model: widget.model),
+                                          ));
+                                    },
                                     onTapDown: (details) {
                                       setState(() {
                                         tap = true;
@@ -397,9 +391,11 @@ class _CustomCardState extends State<CustomCard> {
                                 Widget? child) =>
                             AnimatedContainer(
                           height: value,
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             border: BorderDirectional(
-                              top: BorderSide(color: Colors.white),
+                              top: BorderSide(
+                                  color:
+                                      flag ? Colors.white : Colors.transparent),
                             ),
                           ),
                           duration: const Duration(milliseconds: 200),
@@ -409,46 +405,59 @@ class _CustomCardState extends State<CustomCard> {
                             children: [
                               const Spacer(),
                               Text(
-                                "My Heart",
+                                widget.model.name,
                                 style: GoogleFonts.urbanist(
                                     textStyle: TextStyle(
                                         fontSize: 18.sp,
-                                        color: Colors.black,
+                                        // color: Colors.black,
                                         fontWeight: FontWeight.w400)),
                               ),
                               const Spacer(),
-                              GestureDetector(
-                                onTapDown: (details) {
-                                  setState(() {
-                                    tap = true;
-                                  });
-                                },
-                                onTapUp: (details) {
-                                  setState(() {
-                                    tap = false;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.blueColor),
-                                  duration: const Duration(milliseconds: 300),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(tap ? 8 : 10.0),
-                                    child: Transform(
-                                      alignment: FractionalOffset.center,
-                                      transform: Matrix4.identity()
-                                        ..rotateZ(12 * 3.1415927 / -80),
-                                      child: const Icon(
-                                        // IconlyBroken.arrowUp2,
-                                        Iconsax.arrow_right_1,
-                                        color: Colors.white,
-                                        size: 30,
+                              flag
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  DetailsScreen(
+                                                      model: widget.model),
+                                            ));
+                                      },
+                                      onTapDown: (details) {
+                                        setState(() {
+                                          tap = true;
+                                        });
+                                      },
+                                      onTapUp: (details) {
+                                        setState(() {
+                                          tap = false;
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.blueColor),
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.all(tap ? 8 : 10.0),
+                                          child: Transform(
+                                            alignment: FractionalOffset.center,
+                                            transform: Matrix4.identity()
+                                              ..rotateZ(12 * 3.1415927 / -80),
+                                            child: const Icon(
+                                              // IconlyBroken.arrowUp2,
+                                              Iconsax.arrow_right_1,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
-                              )
+                                    )
+                                  : const SizedBox.shrink()
                             ],
                           ),
                         ),

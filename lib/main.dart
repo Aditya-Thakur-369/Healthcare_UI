@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:healthcare/features/home/home.dart';
-import 'package:healthcare/features/navigator/navigatoin.dart';
 
 void main() {
   runApp(const MainApp());
@@ -12,13 +11,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const ScreenUtilInit(
-      designSize: Size(430, 932),
+    return ScreenUtilInit(
+      designSize: const Size(430, 932),
       minTextAdapt: true,
       splitScreenMode: true,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+        theme: ThemeData.light(useMaterial3: true),
+        darkTheme: ThemeData.dark(useMaterial3: true),
+        themeMode: ThemeMode.system,
+        home: const HomeScreen(),
       ),
     );
   }
