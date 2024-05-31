@@ -3,6 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:healthcare/features/home/home.dart';
 
 void main() {
+  /*
+
+  By Aditya Thakur (flutter.spirit)
+
+  */
   runApp(const MainApp());
 }
 
